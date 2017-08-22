@@ -1,0 +1,9 @@
+name: cache_hash
+version: 0.1.0
+
+authors:
+  - Sam Eaton <same@qualtrics.com>
+
+crystal: 0.23.1
+
+license: MIT
