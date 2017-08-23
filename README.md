@@ -34,7 +34,7 @@ cache_hash.get "key2" #=> "Value 2"
 
 ### `CacheHash(V)`
 
-Defines the type(s) for the values. The key must be of type `String`.
+Defines the type(s) for the values.
 
 #### Example
 
