@@ -12,7 +12,7 @@ dependencies:
     github: samueleaton/cache_hash
 ```
 
-## Usage
+## Usage Example
 
 ```ruby
 require "cache_hash"
@@ -29,6 +29,46 @@ sleep 1 # two seconds elapsed
 cache_hash.get "key1" #=> nil
 cache_hash.get "key2" #=> "Value 2"
 ```
+
+## API
+
+### `CacheHash(K, V)`
+
+Defines the types for the keys and values.
+
+#### Example
+
+```ruby
+CacheHash(String, String).new(Time::Span(0, 1, 0))
+```
+
+### `.new(cache_time_span : Time::Span)`
+
+Creates a new instance of `CacheHash` with the and sets the cache interval.
+
+### `.set(key : K, value : V)`
+
+Adds a key/value pair to the hash where `K` and `V` are the types defined at `CacheHash(K, V)`.
+
+### `.get(key : K) : V | Nil`
+
+Returns the value for the the associated key. If the pair is stale (expired) or does not exists, it returns `nil`. If it exists but is expired, it is deleted before returning `nil`.
+ 
+### `.purge_stale`
+
+Removes all stale key/value pairs from the hash.
+
+### `.fresh() : Array(K)`
+
+Runs `purge_stale` and returns an array of all the the non-stale keys.
+
+### `.fresh?(key : K) : Bool`
+
+Returns `true` if the key/value pair exists and is not stale. If the pair is stale (expired) or does not exists, it returns `false`. If it exists but is expired, it is deleted before returning `false`.
+
+### `.time(key : K) : Time`
+
+Returns the time the key/value pair was cached. If the pair is stale (expired) or does not exists, it returns `nil`. If it exists but is expired, it is deleted before returning `nil`.
 
 ## Contributing
 
