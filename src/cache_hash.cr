@@ -39,7 +39,7 @@ class CacheHash(K, T)
     nil
   end
 
-  def fresh
+  def keys
     purge_stale
     @kv_hash.keys
   end

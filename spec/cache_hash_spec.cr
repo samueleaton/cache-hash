@@ -70,7 +70,7 @@ describe CacheHash do
     end
   end
 
-  describe "#fresh" do
+  describe "#keys" do
     it "purges all stale values and returns the IDs of non-stale kv pairs" do
       hash = CacheHash(String, String).new(Time::Span.new(0,0,3))
       hash.set "city_1", "Seattle"
@@ -90,7 +90,7 @@ describe CacheHash do
       hash.raw["city_4"].should eq("Salt Lake City")
       hash.raw["city_5"].should eq("Denver")
 
-      hash.fresh.should eq(["city_4", "city_5"])
+      hash.keys.should eq(["city_4", "city_5"])
 
       hash.raw["city_1"]?.should be_nil
       hash.raw["city_2"]?.should be_nil

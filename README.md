@@ -58,7 +58,7 @@ Returns the value for the the associated key. If the pair is stale (expired) or 
 
 Removes all stale key/value pairs from the hash.
 
-### `.fresh() : Array(K)`
+### `.keys() : Array(K)`
 
 Runs `purge_stale` and returns an array of all the the non-stale keys.
 
