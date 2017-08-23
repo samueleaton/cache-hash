@@ -44,11 +44,11 @@ CacheHash(String, String).new(Time::Span(0, 1, 0))
 
 ### `.new(cache_time_span : Time::Span)`
 
-Creates a new instance of `CacheHash` with the and sets the cache interval.
+Creates a new instance of `CacheHash` and sets the cache interval.
 
 ### `.set(key : K, value : V)`
 
-Adds a key/value pair to the hash where `K` and `V` are the types defined at `CacheHash(K, V)`.
+Adds a key/value pair to the hash where `K` and `V` are the types defined at `CacheHash(K, V)` and saves the time of the action.
 
 ### `.get(key : K) : V | Nil`
 
