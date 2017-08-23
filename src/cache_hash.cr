@@ -1,10 +1,10 @@
-class CacheHash(K, T)
+class CacheHash(V)
   def initialize(@cache_time_span : Time::Span)
-    @kv_hash = {} of K => String
-    @time_hash = {} of K => Time
+    @kv_hash = {} of String => String
+    @time_hash = {} of String => Time
   end
   
-  def get(key)
+  def get(key : String)
     if cached_time = @time_hash[key]?
       if cached_time > Time.now - @cache_time_span
         @kv_hash[key]
@@ -15,7 +15,7 @@ class CacheHash(K, T)
     end
   end
   
-  def set(key, val : T | Nil)
+  def set(key : String, val : V | Nil)
     if val.nil?
       delete key
     else
@@ -24,7 +24,7 @@ class CacheHash(K, T)
     end
   end
 
-  private def delete(key) : String | Nil
+  private def delete(key : String) : String | Nil
     @time_hash.delete key
     @kv_hash.delete key
     nil
@@ -44,7 +44,7 @@ class CacheHash(K, T)
     @kv_hash.keys
   end
 
-  def fresh?(k)
+  def fresh?(k : String)
     if cached_time = @time_hash[k]?
       if cached_time > Time.now - @cache_time_span
         true
@@ -57,7 +57,7 @@ class CacheHash(K, T)
     end
   end
 
-  def time(k)
+  def time(k : String)
     if cached_time = @time_hash[k]?
       if cached_time > Time.now - @cache_time_span
         cached_time

@@ -2,7 +2,7 @@ require "./spec_helper"
 
 describe CacheHash do
   it "saves key value pairs" do
-    hash = CacheHash(String, String).new(Time::Span.new(0,0,4))
+    hash = CacheHash(String).new(Time::Span.new(0,0,4))
     hash.set "city_1", "Seattle"
     hash.set "city_2", "Honk Kong"
     hash.set "city_3", "Sacramento"
@@ -12,7 +12,7 @@ describe CacheHash do
   end
 
   it "removes stale kv pairs on lookup" do
-    hash = CacheHash(String, String).new(Time::Span.new(0,0,3))
+    hash = CacheHash(String).new(Time::Span.new(0,0,3))
     hash.set "city_1", "Seattle"
     sleep 1
     hash.set "city_2", "Honk Kong"
@@ -45,7 +45,7 @@ describe CacheHash do
 
   describe "#purge_stale" do
     it "removes all stale, expired values from the hash" do
-      hash = CacheHash(String, String).new(Time::Span.new(0,0,3))
+      hash = CacheHash(String).new(Time::Span.new(0,0,3))
       hash.set "city_1", "Seattle"
       sleep 1
       hash.set "city_2", "Honk Kong"
@@ -72,7 +72,7 @@ describe CacheHash do
 
   describe "#keys" do
     it "purges all stale values and returns the IDs of non-stale kv pairs" do
-      hash = CacheHash(String, String).new(Time::Span.new(0,0,3))
+      hash = CacheHash(String).new(Time::Span.new(0,0,3))
       hash.set "city_1", "Seattle"
       sleep 1
       hash.set "city_2", "Honk Kong"
@@ -102,7 +102,7 @@ describe CacheHash do
 
   describe "#fresh?" do
     it "returns a true if the kv pair is not stale" do
-      hash = CacheHash(String, String).new(Time::Span.new(0,0,3))
+      hash = CacheHash(String).new(Time::Span.new(0,0,3))
       hash.set "city_1", "Seattle"
       sleep 1
       hash.set "city_2", "Honk Kong"
@@ -122,7 +122,7 @@ describe CacheHash do
     end
 
     it "removes deletes the kv pair if it is stale" do
-      hash = CacheHash(String, String).new(Time::Span.new(0,0,3))
+      hash = CacheHash(String).new(Time::Span.new(0,0,3))
       hash.set "city_1", "Seattle"
       sleep 1
       hash.set "city_2", "Honk Kong"
@@ -147,7 +147,7 @@ describe CacheHash do
 
   describe "#time" do
     it "returns a time if the kv pair is not stale" do
-      hash = CacheHash(String, String).new(Time::Span.new(0,0,3))
+      hash = CacheHash(String).new(Time::Span.new(0,0,3))
       
       t = Time.now
       hash.set "city_1", "Seattle"
@@ -158,7 +158,7 @@ describe CacheHash do
     end
 
     it "delete the kv pair if it is stale" do
-      hash = CacheHash(String, String).new(Time::Span.new(0,0,3))
+      hash = CacheHash(String).new(Time::Span.new(0,0,3))
       hash.set "city_1", "Seattle"
       sleep 1
       hash.set "city_2", "Honk Kong"

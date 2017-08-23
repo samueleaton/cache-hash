@@ -20,7 +20,7 @@ require "cache_hash"
 # (Hours, Minutes, Seconds), caching 2 seconds
 cache_interval = Time::Span.new(0, 0, 2)
 
-cache_hash = CacheHash(String, String).new(cache_interval)
+cache_hash = CacheHash(String).new(cache_interval)
 cache_hash.set "key1", "Value 1"
 sleep 1 # one second elapsed
 cache_hash.set "key2", "Value 2"
@@ -32,25 +32,25 @@ cache_hash.get "key2" #=> "Value 2"
 
 ## API
 
-### `CacheHash(K, V)`
+### `CacheHash(V)`
 
-Defines the types for the keys and values.
+Defines the type(s) for the values. The key must be of type `String`.
 
 #### Example
 
 ```ruby
-CacheHash(String, String).new(Time::Span(0, 1, 0))
+CacheHash(String).new(Time::Span(0, 1, 0))
 ```
 
 ### `.new(cache_time_span : Time::Span)`
 
 Creates a new instance of `CacheHash` and sets the cache interval.
 
-### `.set(key : K, value : V)`
+### `.set(key : String, value : V)`
 
-Adds a key/value pair to the hash where `K` and `V` are the types defined at `CacheHash(K, V)` and saves the time of the action.
+Adds a key/value pair to the hash, where `V` is the type(s) defined at `CacheHash(V)`, and saves the time of the action.
 
-### `.get(key : K) : V | Nil`
+### `.get(key : String) : V | Nil`
 
 Returns the value for the the associated key. If the pair is stale (expired) or does not exists, it returns `nil`. If it exists but is expired, it is deleted before returning `nil`.
  
@@ -58,15 +58,15 @@ Returns the value for the the associated key. If the pair is stale (expired) or 
 
 Removes all stale key/value pairs from the hash.
 
-### `.keys() : Array(K)`
+### `.keys() : Array(String)`
 
 Runs `purge_stale` and returns an array of all the the non-stale keys.
 
-### `.fresh?(key : K) : Bool`
+### `.fresh?(key : String) : Bool`
 
 Returns `true` if the key/value pair exists and is not stale. If the pair is stale (expired) or does not exists, it returns `false`. If it exists but is expired, it is deleted before returning `false`.
 
-### `.time(key : K) : Time`
+### `.time(key : String) : Time`
 
 Returns the time the key/value pair was cached. If the pair is stale (expired) or does not exists, it returns `nil`. If it exists but is expired, it is deleted before returning `nil`.
 
