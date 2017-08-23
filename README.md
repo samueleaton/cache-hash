@@ -21,13 +21,13 @@ require "cache_hash"
 cache_interval = Time::Span.new(0, 0, 2)
 
 cache_hash = CacheHash(String, String).new(cache_interval)
-cache_hash["key1"] = "Value 1"
+cache_hash.set "key1", "Value 1"
 sleep 1 # one second elapsed
-cache_hash["key2"] = "Value 2"
+cache_hash.set "key2", "Value 2"
 sleep 1 # two seconds elapsed
 
-cache_hash["key1"] #=> nil
-cache_hash["key2"] #=> "Value 2"
+cache_hash.get "key1" #=> nil
+cache_hash.get "key2" #=> "Value 2"
 ```
 
 ## Contributing

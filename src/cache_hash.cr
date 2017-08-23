@@ -4,7 +4,7 @@ class CacheHash(K, T)
     @time_hash = {} of K => Time
   end
   
-  def [](key)
+  def get(key)
     if cached_time = @time_hash[key]?
       if cached_time > Time.now - @cache_time_span
         @kv_hash[key]
@@ -15,9 +15,13 @@ class CacheHash(K, T)
     end
   end
   
-  def []=(key, val : T)
-    @time_hash[key] = Time.now
-    @kv_hash[key] = val
+  def set(key, val : T | Nil)
+    if val.nil?
+      delete key
+    else
+      @time_hash[key] = Time.now
+      @kv_hash[key] = val
+    end
   end
 
   private def delete(key) : String | Nil
