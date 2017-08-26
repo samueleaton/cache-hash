@@ -1,9 +1,9 @@
 class CacheHash(V)
   def initialize(@cache_time_span : Time::Span)
-    @kv_hash = {} of String => String
+    @kv_hash = {} of String => V
     @time_hash = {} of String => Time
   end
-  
+
   def get(key : String)
     if cached_time = @time_hash[key]?
       if cached_time > Time.now - @cache_time_span
@@ -14,7 +14,7 @@ class CacheHash(V)
       end
     end
   end
-  
+
   def set(key : String, val : V | Nil)
     if val.nil?
       delete key
@@ -30,7 +30,7 @@ class CacheHash(V)
     nil
   end
 
-  def purge_stale()
+  def purge_stale
     @kv_hash.select! do |k, v|
       if cached_time = @time_hash[k]?
         cached_time > Time.now - @cache_time_span

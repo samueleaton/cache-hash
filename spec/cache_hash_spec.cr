@@ -2,7 +2,7 @@ require "./spec_helper"
 
 describe CacheHash do
   it "saves key value pairs" do
-    hash = CacheHash(String).new(Time::Span.new(0,0,4))
+    hash = CacheHash(String).new(Time::Span.new(0, 0, 4))
     hash.set "city_1", "Seattle"
     hash.set "city_2", "Honk Kong"
     hash.set "city_3", "Sacramento"
@@ -11,8 +11,26 @@ describe CacheHash do
     hash.get("city_3").should eq("Sacramento")
   end
 
+  it "allows different value types" do
+    hash = CacheHash(Int32).new(Time::Span.new(0, 0, 4))
+    hash.set "key1", 1111
+    hash.set "key2", 2222
+    hash.set "key3", 3333
+    hash.get("key1").should eq(1111)
+    hash.get("key2").should eq(2222)
+    hash.get("key3").should eq(3333)
+
+    hash2 = CacheHash(Int32 | String | Bool).new(Time::Span.new(0, 0, 4))
+    hash2.set "key1", 1111
+    hash2.set "key2", "two"
+    hash2.set "key3", false
+    hash2.get("key1").should eq(1111)
+    hash2.get("key2").should eq("two")
+    hash2.get("key3").should eq(false)
+  end
+
   it "removes stale kv pairs on lookup" do
-    hash = CacheHash(String).new(Time::Span.new(0,0,3))
+    hash = CacheHash(String).new(Time::Span.new(0, 0, 3))
     hash.set "city_1", "Seattle"
     sleep 1
     hash.set "city_2", "Honk Kong"
@@ -45,7 +63,7 @@ describe CacheHash do
 
   describe "#purge_stale" do
     it "removes all stale, expired values from the hash" do
-      hash = CacheHash(String).new(Time::Span.new(0,0,3))
+      hash = CacheHash(String).new(Time::Span.new(0, 0, 3))
       hash.set "city_1", "Seattle"
       sleep 1
       hash.set "city_2", "Honk Kong"
@@ -72,7 +90,7 @@ describe CacheHash do
 
   describe "#keys" do
     it "purges all stale values and returns the IDs of non-stale kv pairs" do
-      hash = CacheHash(String).new(Time::Span.new(0,0,3))
+      hash = CacheHash(String).new(Time::Span.new(0, 0, 3))
       hash.set "city_1", "Seattle"
       sleep 1
       hash.set "city_2", "Honk Kong"
@@ -83,7 +101,7 @@ describe CacheHash do
       sleep 1
       hash.set "city_5", "Denver"
       sleep 1
-      
+
       hash.raw["city_1"].should eq("Seattle")
       hash.raw["city_2"].should eq("Honk Kong")
       hash.raw["city_3"].should eq("Sacramento")
@@ -102,7 +120,7 @@ describe CacheHash do
 
   describe "#fresh?" do
     it "returns a true if the kv pair is not stale" do
-      hash = CacheHash(String).new(Time::Span.new(0,0,3))
+      hash = CacheHash(String).new(Time::Span.new(0, 0, 3))
       hash.set "city_1", "Seattle"
       sleep 1
       hash.set "city_2", "Honk Kong"
@@ -113,7 +131,7 @@ describe CacheHash do
       sleep 1
       hash.set "city_5", "Denver"
       sleep 1
-      
+
       hash.fresh?("city_1").should be_false
       hash.fresh?("city_4").should be_true
       hash.fresh?("xxxxx").should be_false
@@ -122,7 +140,7 @@ describe CacheHash do
     end
 
     it "removes deletes the kv pair if it is stale" do
-      hash = CacheHash(String).new(Time::Span.new(0,0,3))
+      hash = CacheHash(String).new(Time::Span.new(0, 0, 3))
       hash.set "city_1", "Seattle"
       sleep 1
       hash.set "city_2", "Honk Kong"
@@ -133,7 +151,7 @@ describe CacheHash do
       sleep 1
       hash.set "city_5", "Denver"
       sleep 1
-      
+
       hash.raw["city_1"].should eq("Seattle")
       hash.raw["city_2"].should eq("Honk Kong")
       hash.raw["city_3"].should eq("Sacramento")
@@ -147,18 +165,18 @@ describe CacheHash do
 
   describe "#time" do
     it "returns a time if the kv pair is not stale" do
-      hash = CacheHash(String).new(Time::Span.new(0,0,3))
-      
+      hash = CacheHash(String).new(Time::Span.new(0, 0, 3))
+
       t = Time.now
       hash.set "city_1", "Seattle"
       hash.time("city_1").class.should eq(Time)
-      
+
       city_1_time = hash.time("city_1").not_nil!
       (city_1_time > t && city_1_time < Time.now).should be_true
     end
 
     it "delete the kv pair if it is stale" do
-      hash = CacheHash(String).new(Time::Span.new(0,0,3))
+      hash = CacheHash(String).new(Time::Span.new(0, 0, 3))
       hash.set "city_1", "Seattle"
       sleep 1
       hash.set "city_2", "Honk Kong"
@@ -169,7 +187,7 @@ describe CacheHash do
       sleep 1
       hash.set "city_5", "Denver"
       sleep 1
-      
+
       hash.raw["city_1"].should eq("Seattle")
       hash.raw["city_2"].should eq("Honk Kong")
       hash.raw["city_3"].should eq("Sacramento")
