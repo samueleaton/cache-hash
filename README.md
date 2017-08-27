@@ -71,7 +71,7 @@ Returns the time the key/value pair was cached. If the pair is stale (expired) o
 
 ### `.refresh(key : String) : V | Nil`
 
-Refreshes the time for the key/value pair and returns the hash value if successful, otherwise returns nil.
+Refreshes the time for the key/value pair and returns the hash value if successful, otherwise returns `nil`.
 
 ## Contributing
 
