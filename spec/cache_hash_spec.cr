@@ -2,7 +2,7 @@ require "./spec_helper"
 
 describe CacheHash do
   it "saves key value pairs" do
-    hash = CacheHash(String).new(Time::Span.new(0, 0, 4))
+    hash = CacheHash(String).new(4.seconds)
     hash.set "city_1", "Seattle"
     hash.set "city_2", "Honk Kong"
     hash.set "city_3", "Sacramento"
@@ -30,7 +30,7 @@ describe CacheHash do
   end
 
   it "removes stale kv pairs on lookup" do
-    hash = CacheHash(String).new(Time::Span.new(0, 0, 3))
+    hash = CacheHash(String).new(3.seconds)
     hash.set "city_1", "Seattle"
     sleep 1
     hash.set "city_2", "Honk Kong"
@@ -196,6 +196,72 @@ describe CacheHash do
 
       hash.time("city_1").should be_nil
       hash.raw["city_1"]?.should be_nil
+    end
+  end
+
+  describe "#refresh" do
+    it "refreshes the expiration time" do
+      hash = CacheHash(String).new(Time::Span.new(0, 0, 3))
+
+      hash.set "city_1", "Seattle"
+      sleep 1
+
+      hash.set "city_2", "Hong Kong"
+      sleep 1
+
+      hash.refresh "city_1"
+
+      hash.set "city_3", "Sacramento"
+      sleep 1
+
+      hash.refresh "city_2"
+
+      hash.set "city_4", "Salt Lake City"
+      sleep 1
+
+      hash.refresh "city_2"
+
+      hash.set "city_5", "Denver"
+
+      hash.get("city_1").should eq("Seattle")
+      sleep 1
+
+      hash.get("city_1").should be_nil
+      hash.get("city_2").should eq("Hong Kong")
+      hash.get("city_3").should be_nil
+      hash.get("city_4").should eq("Salt Lake City")
+      hash.get("city_5").should eq("Denver")
+
+      sleep 1
+
+      hash.get("city_2").should eq("Hong Kong")
+      hash.get("city_4").should be_nil
+
+      sleep 1
+      hash.get("city_2").should be_nil
+    end
+    it "returns the value on success" do
+      hash = CacheHash(String).new(Time::Span.new(0, 0, 3))
+
+      hash.set "city_1", "Seattle"
+      sleep 1
+
+      hash.refresh("city_1").should eq("Seattle")
+    end
+    it "returns nil if no key or if already expires" do
+      hash = CacheHash(String).new(Time::Span.new(0, 0, 3))
+
+      hash.set "city_1", "Seattle"
+      sleep 1
+
+      hash.set "city_2", "Hong Kong"
+      sleep 1
+
+      hash.refresh("city_2").should eq("Hong Kong")
+      sleep 1
+
+      hash.refresh("city_1").should be_nil
+      hash.refresh("city_3").should be_nil
     end
   end
 end

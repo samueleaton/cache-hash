@@ -44,12 +44,12 @@ class CacheHash(V)
     @kv_hash.keys
   end
 
-  def fresh?(k : String)
-    if cached_time = @time_hash[k]?
+  def fresh?(key : String)
+    if cached_time = @time_hash[key]?
       if cached_time > Time.now - @cache_time_span
         true
       else
-        delete k
+        delete key
         false
       end
     else
@@ -57,12 +57,24 @@ class CacheHash(V)
     end
   end
 
-  def time(k : String)
-    if cached_time = @time_hash[k]?
+  def time(key : String)
+    if cached_time = @time_hash[key]?
       if cached_time > Time.now - @cache_time_span
         cached_time
       else
-        delete k
+        delete key
+      end
+    end
+  end
+
+  def refresh(key : String)
+    if cached_time = @time_hash[key]?
+      if cached_time > Time.now - @cache_time_span
+        @time_hash[key] = Time.now
+        @kv_hash[key]
+      else
+        delete key
+        nil
       end
     end
   end
