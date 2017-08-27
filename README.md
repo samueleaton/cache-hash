@@ -17,17 +17,16 @@ dependencies:
 ```ruby
 require "cache_hash"
 
-# (Hours, Minutes, Seconds), caching 2 seconds
-cache_interval = Time::Span.new(0, 0, 2)
+cache_hash = CacheHash(String).new(2.seconds)
 
-cache_hash = CacheHash(String).new(cache_interval)
-cache_hash.set "key1", "Value 1"
+cache_hash.set "city1", "Seattle"
 sleep 1 # one second elapsed
-cache_hash.set "key2", "Value 2"
+
+cache_hash.set "city2", "Hong Kong"
 sleep 1 # two seconds elapsed
 
-cache_hash.get "key1" #=> nil
-cache_hash.get "key2" #=> "Value 2"
+cache_hash.get "city1" #=> nil
+cache_hash.get "city2" #=> "Hong Kong"
 ```
 
 ## API
@@ -39,7 +38,7 @@ Defines the type(s) for the values.
 #### Example
 
 ```ruby
-CacheHash(String).new(Time::Span(0, 1, 0))
+CacheHash(String).new(1.minute)
 ```
 
 ### `.new(cache_time_span : Time::Span)`
@@ -53,7 +52,7 @@ Adds a key/value pair to the hash, where `V` is the type(s) defined at `CacheHas
 ### `.get(key : String) : V | Nil`
 
 Returns the value for the the associated key. If the pair is stale (expired) or does not exists, it returns `nil`. If it exists but is expired, it is deleted before returning `nil`.
- 
+
 ### `.purge_stale`
 
 Removes all stale key/value pairs from the hash.
@@ -69,6 +68,10 @@ Returns `true` if the key/value pair exists and is not stale. If the pair is sta
 ### `.time(key : String) : Time`
 
 Returns the time the key/value pair was cached. If the pair is stale (expired) or does not exists, it returns `nil`. If it exists but is expired, it is deleted before returning `nil`.
+
+### `.refresh(key : String) : V | Nil`
+
+Refreshes the time for the key/value pair and returns the hash value if successful, otherwise returns `nil`.
 
 ## Contributing
 
