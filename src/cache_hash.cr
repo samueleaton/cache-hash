@@ -24,19 +24,18 @@ class CacheHash(V)
     end
   end
 
-  private def delete(key : String) : String | Nil
+  private def delete(key : String) : Nil
     @time_hash.delete key
     @kv_hash.delete key
     nil
   end
 
   def purge_stale
-    @kv_hash.select! do |k, v|
-      if cached_time = @time_hash[k]?
-        cached_time > Time.now - @cache_time_span
+    @kv_hash.each_key do |key|
+      if cached_time = @time_hash[key]?
+        delete key unless cached_time > Time.now - @cache_time_span
       end
     end
-    nil
   end
 
   def keys
