@@ -264,4 +264,18 @@ describe CacheHash do
       hash.refresh("city_3").should be_nil
     end
   end
+
+  describe "#purge" do
+    it "purges all values from cache" do
+      hash = CacheHash(String).new(5.seconds)
+      hash.set "city_1", "Seattle"
+      hash.set "city_2", "Honk Kong"
+      hash.set "city_3", "Sacramento"
+      hash.purge
+      hash.get("city_1").should be_nil
+      hash.get("city_2").should be_nil
+      hash.get("city_3").should be_nil
+      hash.raw.empty?.should be_true
+    end
+  end
 end

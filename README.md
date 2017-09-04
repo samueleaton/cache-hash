@@ -53,6 +53,10 @@ Adds a key/value pair to the hash, where `V` is the type(s) defined at `CacheHas
 
 Returns the value for the the associated key. If the pair is stale (expired) or does not exists, it returns `nil`. If it exists but is expired, it is deleted before returning `nil`.
 
+### `.purge`
+
+Removes all key/value pairs from the hash.
+
 ### `.purge_stale`
 
 Removes all stale key/value pairs from the hash.

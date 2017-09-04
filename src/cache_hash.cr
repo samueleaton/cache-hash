@@ -38,6 +38,12 @@ class CacheHash(V)
     end
   end
 
+  def purge
+    @time_hash.clear
+    @kv_hash.clear
+    nil
+  end
+
   def keys
     purge_stale
     @kv_hash.keys
