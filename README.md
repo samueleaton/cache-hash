@@ -9,7 +9,7 @@ Add this to your application's `shard.yml`:
 ```yaml
 dependencies:
   cache_hash:
-    github: samueleaton/cache_hash
+    github: samueleaton/cache-hash
 ```
 
 ## Usage Example
