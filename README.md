@@ -73,8 +73,8 @@ cache_hash.set_purge_interval(10.minutes) # stale_only defaults to true
 ```
 
 ```ruby
-cache_hash = CacheHash(String).new(1.minute, stale_only: false)
-cache_hash.set_purge_interval(10.minutes) # deletes all values, not just stale ones
+cache_hash = CacheHash(String).new(1.minute)
+cache_hash.set_purge_interval(10.minutes, stale_only: false) # deletes all values, not just stale ones
 ```
 
 ### `.keys() : Array(String)`
