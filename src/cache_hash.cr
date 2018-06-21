@@ -96,15 +96,19 @@ class CacheHash(V)
   end
 
   private def run_purge_interval_loop
-    stale_only = @purge_interval_stale_only
-    if (interval = @purge_interval).is_a?(Time::Span)
-      if stale_only
-        purge_stale
-      else
-        purge
+    return if @is_purge_interval_running
+
+    @is_purge_interval_running = true
+    loop do
+      stale_only = @purge_interval_stale_only
+      if (interval = @purge_interval).is_a?(Time::Span)
+        sleep interval.as(Time::Span)
+        if stale_only
+          purge_stale
+        else
+          purge
+        end
       end
-      sleep interval.as(Time::Span)
-      run_purge_interval_loop
     end
   end
 end

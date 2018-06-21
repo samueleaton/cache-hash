@@ -325,7 +325,7 @@ describe CacheHash do
       hash.get("city_2").should eq("Hong Kong")
       hash.get("city_3").should eq("Sacramento")
       hash.raw.empty?.should be_false
-      sleep 3
+      sleep 4
       hash.get("city_1").should be_nil
       hash.get("city_2").should be_nil
       hash.get("city_3").should be_nil
