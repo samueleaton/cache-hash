@@ -2,6 +2,7 @@ class CacheHash(V)
   def initialize(@cache_time_span : Time::Span)
     @kv_hash = {} of String => V
     @time_hash = {} of String => Time
+    @is_purge_interval_running = false
   end
 
   def get(key : String)
@@ -81,6 +82,29 @@ class CacheHash(V)
         delete key
         nil
       end
+    end
+  end
+
+  def set_purge_interval(interval : Time::Span, stale_only = true)
+    @purge_interval = interval
+    @purge_interval_stale_only = stale_only
+    unless @is_purge_interval_running
+      spawn do
+        run_purge_interval_loop
+      end
+    end
+  end
+
+  private def run_purge_interval_loop
+    stale_only = @purge_interval_stale_only
+    if (interval = @purge_interval).is_a?(Time::Span)
+      if stale_only
+        purge_stale
+      else
+        purge
+      end
+      sleep interval.as(Time::Span)
+      run_purge_interval_loop
     end
   end
 end

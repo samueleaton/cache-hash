@@ -61,6 +61,22 @@ Removes all key/value pairs from the hash.
 
 Removes all stale key/value pairs from the hash.
 
+### `.set_purge_interval(interval : Time::Span, stale_only : Bool = true)`
+
+Sets an interval where key/value pairs will automatically be purged.
+
+**Example:**
+
+```ruby
+cache_hash = CacheHash(String).new(1.minute)
+cache_hash.set_purge_interval(10.minutes) # stale_only defaults to true
+```
+
+```ruby
+cache_hash = CacheHash(String).new(1.minute, stale_only: false)
+cache_hash.set_purge_interval(10.minutes) # deletes all values, not just stale ones
+```
+
 ### `.keys() : Array(String)`
 
 Runs `purge_stale` and returns an array of all the the non-stale keys.

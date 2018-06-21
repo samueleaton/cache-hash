@@ -165,14 +165,17 @@ describe CacheHash do
 
   describe "#time" do
     it "returns a time if the kv pair is not stale" do
-      hash = CacheHash(String).new(Time::Span.new(0, 0, 3))
-
-      t = Time.now
+      time_before = Time.now
+      sleep 1
+      hash = CacheHash(String).new(3.seconds)
       hash.set "city_1", "Seattle"
-      hash.time("city_1").class.should eq(Time)
+      sleep 1
+      time_after = Time.now
 
       city_1_time = hash.time("city_1").not_nil!
-      (city_1_time > t && city_1_time < Time.now).should be_true
+      city_1_time.class.should eq(Time)
+      (city_1_time > time_before).should be_true
+      (city_1_time < time_after).should be_true
     end
 
     it "delete the kv pair if it is stale" do
@@ -272,6 +275,57 @@ describe CacheHash do
       hash.set "city_2", "Honk Kong"
       hash.set "city_3", "Sacramento"
       hash.purge
+      hash.get("city_1").should be_nil
+      hash.get("city_2").should be_nil
+      hash.get("city_3").should be_nil
+      hash.raw.empty?.should be_true
+    end
+  end
+
+  describe "#set_purge_interval" do
+    it "purges stale values from hash" do
+      hash = CacheHash(String).new(4.seconds)
+      hash.set_purge_interval(3.seconds)
+      hash.set "city_1", "Seattle"
+      hash.set "city_2", "Hong Kong"
+      hash.set "city_3", "Sacramento"
+
+      hash.get("city_1").should eq("Seattle")
+      hash.get("city_2").should eq("Hong Kong")
+      hash.get("city_3").should eq("Sacramento")
+      hash.raw.empty?.should be_false
+      sleep 4
+      hash.get("city_1").should be_nil
+      hash.get("city_2").should be_nil
+      hash.get("city_3").should be_nil
+      hash.raw.empty?.should be_true
+
+      hash.set "city_1", "Seattle"
+      sleep 2
+      hash.set "city_2", "Hong Kong"
+      hash.get("city_1").should eq("Seattle")
+      hash.get("city_2").should eq("Hong Kong")
+      sleep 2
+      hash.get("city_1").should be_nil
+      hash.get("city_2").should eq("Hong Kong")
+      sleep 2
+      hash.get("city_1").should be_nil
+      hash.get("city_2").should be_nil
+      hash.raw.empty?.should be_true
+    end
+
+    it "purges all values from hash if specified" do
+      hash = CacheHash(String).new(5.seconds)
+      hash.set_purge_interval(3.seconds, stale_only: false)
+      hash.set "city_1", "Seattle"
+      hash.set "city_2", "Hong Kong"
+      hash.set "city_3", "Sacramento"
+
+      hash.get("city_1").should eq("Seattle")
+      hash.get("city_2").should eq("Hong Kong")
+      hash.get("city_3").should eq("Sacramento")
+      hash.raw.empty?.should be_false
+      sleep 3
       hash.get("city_1").should be_nil
       hash.get("city_2").should be_nil
       hash.get("city_3").should be_nil
